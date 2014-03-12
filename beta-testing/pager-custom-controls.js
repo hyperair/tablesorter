@@ -37,21 +37,26 @@ $.tablesorter.customPagerControls = function(settings) {
 	$table
 		.on('pagerInitialized pagerComplete', function (e, c) {
 			var indx, pages = $('<div/>'), pageArray = [],
-			cur = c.page + 1,
-			start = cur > 1 ? (c.filteredPages - cur < options.aroundCurrent ? -(options.aroundCurrent + 1) + (c.filteredPages - cur) : -options.aroundCurrent) : 0,
-			end = cur < options.aroundCurrent + 1 ? options.aroundCurrent + 3 - cur : options.aroundCurrent + 1;
-			for (indx = start; indx < end; indx++) {
-				if (cur + indx >= 1 && cur + indx < c.filteredPages) { pageArray.push( cur + indx ); }
-			}
+			cur = c.page + 1;
+
+			// left end
+			for (indx = 1; indx <= options.ends; indx++)
+				pageArray.push(indx);
+
+			// aroundCurrent
+			for (indx = Math.max(indx, cur - options.aroundCurrent);
+			     indx <= Math.min(c.filteredPages,
+			                      cur + options.aroundCurrent + 1);
+			     indx++)
+				pageArray.push(indx);
+
+			// right end
+			for (indx = Math.max(indx, c.filteredPages - options.ends + 1);
+			     indx <= c.filteredPages;
+			     indx++)
+				pageArray.push(indx);
+
 			if (pageArray.length) {
-				// include first and last pages (ends) in the pagination
-				for (indx = 0; indx < options.ends; indx++){
-					if ($.inArray(indx + 1, pageArray) === -1) { pageArray.push(indx + 1); }
-					if ($.inArray(c.filteredPages - indx, pageArray) === -1) { pageArray.push(c.filteredPages - indx); }
-				}
-				// sort the list
-				pageArray = pageArray.sort(function(a, b){ return a - b; });
-				// make links and spacers
 				$.each(pageArray, function(indx, value){
 					pages
 						.append( $(options.link.replace(/\{page\}/g, value)).toggleClass(options.currentClass, value === cur).attr('data-page', value) )
