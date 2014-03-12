@@ -59,7 +59,7 @@ $.tablesorter.customPagerControls = function(settings) {
 							( indx >= pageArray.length - 1 ? '' : options.adjacentSpacer )) + '</span>' );
 				});
 			}
-			$('.pagecount').html(pages.html());
+			$(options.pager).find('.pagecount').html(pages.html());
 		});
 
 	// set up pager controls
